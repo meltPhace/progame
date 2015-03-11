@@ -31,6 +31,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 	    .origin(Object)
 	    .on("drag", function (d) {
 
+            //tests de collision
             if(parseInt(d.x()) + d3.event.dx <= 0){
                 d3.event.dx = 0;
                 d.x(0);
@@ -51,15 +52,30 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
                 d.y((vm.svgHeight - parseInt(d.height())));
             }
 
-            vm.rectangles.foreach(function (rect) {
-                
-            });
+            if(vm.rectangles().length > 1) {
+                vm.rectangles().forEach(function (tmprect) {
+                    if(rectCollide(d.rect(), tmprect.rect())){
+                        d.x(0);
+                        d.y(0);
+                        /*d3.event.dx = 0;
+                        d3.event.dy = 0;*/
+                    }
+                });
+            }
 
             //update de la position du rectangle dans le viewmodel
 	    	d.x(parseInt(d.x()) + d3.event.dx);
 			d.y(parseInt(d.y()) + d3.event.dy);
 		});
 
+    function rectCollide (rect0, rect1) {
+        var rez = Math.max(rect0.x, rect0.x + rect0.width) >= Math.min(rect1.x, rect1.x + rect1.width) 
+            && Math.min(rect0.x, rect0.x + rect0.width) <= Math.max(rect1.x, rect1.x + rect1.width)
+            && Math.max(rect0.y, rect0.y + rect0.height) >= Math.min(rect1.y, rect1.y + rect1.height) 
+            && Math.min(rect0.y, rect0.y + rect0.height) <= Math.max(rect1.y, rect1.y + rect1.height);
+
+        return rez;
+    };
 
     var vm = new ViewModel();
     ko.applyBindings(vm);
@@ -76,7 +92,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
             .append("rect")
             .attr("id", function (d) { return d.name(); })
             .attr("opacity", 0.0)
-            .style("fill", "#337AB7")//bleu
+            .style("fill", getRandomColor)//bleu
             .transition()
             .duration(1000)
             .attr("opacity", 0.8);
@@ -96,6 +112,11 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 
         rects.exit().remove();
     };
+
+    function getRandomColor() {
+        var colors = ["#337AB7", "#3338b7", "#33b7b2", "#b7337a", "#7ab733", "#b77033"];//shades of blue
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
 
     var subs = []; // souscriptions
     // Souscription à la liste des rectangles
