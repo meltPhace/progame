@@ -12,7 +12,7 @@ define(['../lib/knockout-3.3.0.js'], function (ko) {
 			return { 
 				x: this.x(), y: this.y(), width: this.width(), height: this.height() 
 			};
-		}, this);		
+		}, this);
 	};
 
 	return Rectangle;

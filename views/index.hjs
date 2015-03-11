@@ -40,25 +40,22 @@
         	<button type="button" class="btn btn-primary" data-bind="click:$root.saveRects">Save</button>
         	<br><br>
 	        <!--ko foreach: rectangles-->
-		        <div class="form-group">
-                    <label class="col-sm-2 control-label" for="xInput">x: </label>
-                    <input id="xInput" class="form-control" data-bind="value: x" />
-	            </div>
-	            <div class="form-group">
-                    <label class="col-sm-2 control-label" for="yInput">y: </label>
-                    <input id="yInput" class="form-control" data-bind="value: y" />
-	            </div>
-	            <div class="form-group">
-                    <label class="col-sm-2 control-label" for="xInput">width: </label>
-                    <input id="xInput" class="form-control" data-bind="value: width" />
-	            </div>
-	            <div class="form-group">
-                    <label class="col-sm-2 control-label" for="xInput">height: </label>
-                    <input id="xInput" class="form-control" data-bind="value: height" />
-	            </div>
+            <div>
+                <label for="xInput">x: </label>
+                <input id="xInput" data-bind="value: x" />
+
+                <label for="yInput">y: </label>
+                <input id="yInput" data-bind="value: y" />
+
+                <label for="xInput">width: </label>
+                <input id="xInput" data-bind="value: width" />
+
+                <label for="xInput">height: </label>
+                <input id="xInput" data-bind="value: height" />
+            </div>
 	        <!--/ko-->
      	</div>
-        <svg id="svg" width="500px" height="500px"/>
+        <svg id="svg" data-bind="style: { width: innerWidth }" height="500px"/>
         <div class="row">
             <pre data-bind="text: $data.lastSavedJson"></pre>
         </div>
