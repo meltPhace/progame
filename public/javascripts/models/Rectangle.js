@@ -8,9 +8,12 @@ define(['../lib/knockout-3.3.0.js'], function (ko) {
 		this.width = ko.observable(100);
 		this.height = ko.observable(100);
 
-		this.rect = ko.computed(function(){
-			return {x:this.x, y:this.y, w:this.width, h:this.height};	
-		});
-	}
+		this.rect = ko.computed(function () {
+			return { 
+				x: this.x(), y: this.y(), width: this.width(), height: this.height() 
+			};
+		}, this);		
+	};
+
 	return Rectangle;
 });

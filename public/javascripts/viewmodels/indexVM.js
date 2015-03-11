@@ -31,7 +31,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 	    	// Update the view model
 	    	d.x(parseInt(d.x()) + d3.event.dx);
 			d.y(parseInt(d.y()) + d3.event.dy);
-		});		
+		});
 
 
     var vm = new ViewModel();
