@@ -42,20 +42,20 @@
 	        <!--ko foreach: rectangles-->
             <div>
                 <label for="xInput">x: </label>
-                <input id="xInput" data-bind="value: x" />
+                <input id="xInput" data-bind="textInput: x" />
 
                 <label for="yInput">y: </label>
-                <input id="yInput" data-bind="value: y" />
+                <input id="yInput" data-bind="textInput: y" />
 
                 <label for="xInput">width: </label>
-                <input id="xInput" data-bind="value: width" />
+                <input id="xInput" data-bind="textInput: width" />
 
                 <label for="xInput">height: </label>
-                <input id="xInput" data-bind="value: height" />
+                <input id="xInput" data-bind="textInput: height" />
             </div>
 	        <!--/ko-->
      	</div>
-        <svg id="svg" data-bind="style: { width: innerWidth }" height="500px"/>
+        <svg id="svg" data-bind="style: { width: innerWidth, height: svgHeight }" />
         <div class="row">
             <pre data-bind="text: $data.lastSavedJson"></pre>
         </div>

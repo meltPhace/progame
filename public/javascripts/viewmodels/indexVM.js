@@ -7,6 +7,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
         this.innerWidth = ko.observable(
             isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth - (100)
         );
+        this.svgHeight = 400;
 
 		//function bindings
 		this.addRect = this.addRect.bind(this);
@@ -29,7 +30,32 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 	var drag = d3.behavior.drag()
 	    .origin(Object)
 	    .on("drag", function (d) {
-            //update de la position du rectangle
+
+            if(parseInt(d.x()) + d3.event.dx <= 0){
+                d3.event.dx = 0;
+                d.x(0);
+            }
+
+            if(parseInt(d.x()) + d3.event.dx >= vm.innerWidth() - 100){
+                d3.event.dx = 0;
+                d.x(vm.innerWidth() - 100);
+            }
+
+            if(parseInt(d.y()) + d3.event.dy <= 0){
+                d3.event.dy = 0;
+                d.y(0);
+            }
+
+            if(parseInt(d.y()) + d3.event.dy >= (vm.svgHeight - parseInt(d.height()))){
+                d3.event.dy = 0;
+                d.y((vm.svgHeight - parseInt(d.height())));
+            }
+
+            vm.rectangles.foreach(function (rect) {
+                
+            });
+
+            //update de la position du rectangle dans le viewmodel
 	    	d.x(parseInt(d.x()) + d3.event.dx);
 			d.y(parseInt(d.y()) + d3.event.dy);
 		});
@@ -39,16 +65,18 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
     ko.applyBindings(vm);
 
     function update(data) {
-        // Join elements with data
+
+        // selection des rectangles selon les données
         var rects = d3.select("#svg")
             .selectAll("rect")
             .data(data, function (d) { return d.name(); });
-        // Creation des nouveaux elements avec ue transition
+
+        // Creation des nouveaux elements avec une transition
         rects.enter()
             .append("rect")
             .attr("id", function (d) { return d.name(); })
             .attr("opacity", 0.0)
-            .style("fill", "#337AB7")
+            .style("fill", "#337AB7")//bleu
             .transition()
             .duration(1000)
             .attr("opacity", 0.8);
@@ -58,6 +86,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
             .attr("y", function (d) { return d.y(); })
             .attr("width", function (d) { return d.width(); })
             .attr("height", function (d) { return d.height(); })
+            .attr("cursor", "move")
             .call(drag);
 
         //rectangle events
