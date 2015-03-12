@@ -7,11 +7,11 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
         this.innerWidth = ko.observable(
             isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth - (100)
         );
-        this.svgHeight = 400;
+        this.svgHeight = 500;
 
 		//function bindings
 		this.addRect = this.addRect.bind(this);
-		this.removeRect = this.removeRect.bind(this);
+		this.removeRect = this.removeLastRect.bind(this);
 		this.saveRects = this.saveRects.bind(this);
 	};
 
@@ -19,8 +19,8 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 		this.rectangles.push(new Rectangle());
 	};
 
-	ViewModel.prototype.removeRect = function() {
-		this.rectangles.shift();
+	ViewModel.prototype.removeLastRect = function() {
+		this.rectangles.pop();
 	};
 
 	ViewModel.prototype.saveRects = function() {
@@ -28,7 +28,10 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 	};
 
 	var drag = d3.behavior.drag()
-	    .origin(Object)
+	    .origin(function(d) { 
+            d.saveLastPosition(d.rect());
+            return d; 
+        })
 	    .on("drag", function (d) {
 
             //tests de collision
@@ -36,37 +39,35 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
                 d3.event.dx = 0;
                 d.x(0);
             }
-
             if(parseInt(d.x()) + d3.event.dx >= vm.innerWidth() - 100){
                 d3.event.dx = 0;
                 d.x(vm.innerWidth() - 100);
             }
-
             if(parseInt(d.y()) + d3.event.dy <= 0){
                 d3.event.dy = 0;
                 d.y(0);
             }
-
             if(parseInt(d.y()) + d3.event.dy >= (vm.svgHeight - parseInt(d.height()))){
                 d3.event.dy = 0;
                 d.y((vm.svgHeight - parseInt(d.height())));
             }
 
-            if(vm.rectangles().length > 1) {
-                vm.rectangles().forEach(function (tmprect) {
-                    if(rectCollide(d.rect(), tmprect.rect())){
-                        d.x(0);
-                        d.y(0);
-                        /*d3.event.dx = 0;
-                        d3.event.dy = 0;*/
-                    }
-                });
-            }
-
             //update de la position du rectangle dans le viewmodel
 	    	d.x(parseInt(d.x()) + d3.event.dx);
 			d.y(parseInt(d.y()) + d3.event.dy);
-		});
+		})
+        .on("dragend", function (d) {
+            if(vm.rectangles().length > 1) {
+                vm.rectangles().forEach(function (tmprect) {
+                    if(d.name() != tmprect.name()){
+                        if(rectCollide(d.rect(), tmprect.rect())){
+                            alert("collision!");
+                            console.log(d.lastPosition());                            
+                        }
+                    }
+                });
+            }            
+        });
 
     function rectCollide (rect0, rect1) {
         var rez = Math.max(rect0.x, rect0.x + rect0.width) >= Math.min(rect1.x, rect1.x + rect1.width) 
@@ -76,6 +77,10 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
 
         return rez;
     };
+
+    var collideFrom = null;
+    var enumTypeDirection = Object.freeze({LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM:3});
+
 
     var vm = new ViewModel();
     ko.applyBindings(vm);
@@ -92,7 +97,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
             .append("rect")
             .attr("id", function (d) { return d.name(); })
             .attr("opacity", 0.0)
-            .style("fill", getRandomColor)//bleu
+            .style("fill", getRandomColor)
             .transition()
             .duration(1000)
             .attr("opacity", 0.8);
@@ -114,7 +119,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
     };
 
     function getRandomColor() {
-        var colors = ["#337AB7", "#3338b7", "#33b7b2", "#b7337a", "#7ab733", "#b77033"];//shades of blue
+        var colors = ["#337AB7", "#3338b7", "#33b7b2", "#b7337a", "#7ab733", "#b77033"];
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
