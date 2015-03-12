@@ -35,8 +35,8 @@
         <h1>{{ title }}</h1>
         <br>
         <div class="row">
-        	<button type="button" class="btn btn-primary" data-bind="click:$root.addRect">Add</button>
-        	<button type="button" class="btn btn-primary" data-bind="click:$root.removeLastRect">Remove</button>
+        	<button type="button" class="btn btn-primary" data-bind="click:$root.addRect">Add rectangle</button>
+        	<button type="button" class="btn btn-primary" data-bind="click:$root.removeLastRect">Remove last rectangle</button>
         	<button type="button" class="btn btn-primary" data-bind="click:$root.saveRects">Save</button>
         	<br><br>
 	        <!--ko foreach: rectangles-->

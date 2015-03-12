@@ -7,6 +7,7 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
         this.innerWidth = ko.observable(
             isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth - (100)
         );
+        /*this.innerWidth = ko.observable(120);*/
         this.svgHeight = 500;
 
 		//function bindings
@@ -43,6 +44,12 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
                 d3.event.dx = 0;
                 d.x(vm.innerWidth() - 100);
             }
+
+            /*if(parseInt(d.x()) + d3.event.dx != 0){
+                d3.event.dx = 0;
+                d.x(0);
+            }*/
+
             if(parseInt(d.y()) + d3.event.dy <= 0){
                 d3.event.dy = 0;
                 d.y(0);
@@ -61,8 +68,9 @@ require(['./javascripts/lib/knockout-3.3.0.js', './javascripts/lib/d3.js', './ja
                 vm.rectangles().forEach(function (tmprect) {
                     if(d.name() != tmprect.name()){
                         if(rectCollide(d.rect(), tmprect.rect())){
-                            alert("collision!");
-                            console.log(d.lastPosition());                            
+                            alert("collision between " + d.name() + " and " + tmprect.name());
+                            console.log("last position before collision:");
+                            console.log(d.lastPosition());
                         }
                     }
                 });
